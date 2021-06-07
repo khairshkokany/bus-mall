@@ -29,6 +29,11 @@ let rightImageRandom;
 let middleImageRandom;
 
 
+let goatName=[];
+let votes=[];
+let shown=[];
+
+
 
 function User(name,source) {
 
@@ -38,6 +43,8 @@ function User(name,source) {
   this.source=source;
   this.votes=0;
   this.shown=0;
+
+  goatName.push(this.name);
   User.allUser.push(this);
 
 }
@@ -77,9 +84,14 @@ function generateRandomNumber() {
 
 }
 
-console.log(generateRandomNumber());
+//console.log(generateRandomNumber());
 
+
+
+
+let timesRow=[];
 function renderImages() {
+
 
   leftImageRandom=generateRandomNumber();
 
@@ -88,21 +100,28 @@ function renderImages() {
   middleImageRandom=generateRandomNumber();
 
 
-  while (leftImageRandom===rightImageRandom || leftImageRandom===middleImageRandom || middleImageRandom===rightImageRandom){
 
-    leftImageRandom=generateRandomNumber;
-    middleImageRandom=generateRandomNumber;
-    rightImageRandom=generateRandomNumber;
+  while ((leftImageRandom===rightImageRandom || leftImageRandom===middleImageRandom || middleImageRandom===rightImageRandom) || (timesRow.includes(leftImageRandom)||timesRow.includes(rightImageRandom)||timesRow.includes(middleImageRandom))){
+
+    leftImageRandom=generateRandomNumber();
+    middleImageRandom=generateRandomNumber();
+    rightImageRandom=generateRandomNumber();
+
 
 
   }
+  timesRow=[];
+  timesRow.push(leftImageRandom);
+  timesRow.push(rightImageRandom);
+  timesRow.push(middleImageRandom);
+
 
   User.allUser[leftImageRandom].shown++;
   User.allUser[rightImageRandom].shown++;
   User.allUser[middleImageRandom].shown++;
 
-  console.log(User.allUser[leftImageRandom].source);
-
+  //console.log(User.allUser[leftImageRandom].source);
+  console.log(leftImageRandom,rightImageRandom,middleImageRandom);
 
 
   leftImagesElement.src=User.allUser[leftImageRandom].source;
@@ -126,7 +145,7 @@ function userClick(event) {
 
   userAttempts++;
 
-  console.log(userAttempts);
+  //console.log(userAttempts);
 
 
 
@@ -134,7 +153,7 @@ function userClick(event) {
 
 
     if (event.target.id==='left') {
-      console.log(leftImagesElement);
+      //console.log(leftImagesElement);
 
       User.allUser[leftImageRandom].votes++;
 
@@ -148,7 +167,7 @@ function userClick(event) {
 
     }
 
-    console.log(User.allUser);
+    //console.log(User.allUser);
 
     renderImages();
   }
@@ -156,20 +175,20 @@ function userClick(event) {
 
   else{
 
-    // let list=document.getElementById('result-list');
 
-
-    // for (let i = 0; i < User.allUser.length; i++) {
-    //   let userResults=document.createElement('li');
-
-    //   list.appendChild(userResults);
-
-    //   userResults.textContent=`${User.allUser[i].name} has ${User.allUser[i].shown} with ${User.allUser[i].votes}`;
-    //   console.log('hello');
-    // }
     images.removeEventListener('click',userClick);
 
+    for (let i = 0; i < User.allUser.length; i++) {
+      votes.push(User.allUser[i].votes);
+      shown.push(User.allUser[i].shown);
 
+
+
+
+
+    }
+
+    chart();
   }
 
 
@@ -187,32 +206,87 @@ button.addEventListener('click',buttonClick);
 function buttonClick() {
 
 
-  if (userAttempts <= maxAttempts) {
+  let list=document.getElementById('result-list');
 
 
-    let list=document.getElementById('result-list');
+  for (let i = 0; i < User.allUser.length; i++) {
+    let userResults=document.createElement('li');
 
+    list.appendChild(userResults);
 
-    for (let i = 0; i < User.allUser.length; i++) {
-      let userResults=document.createElement('li');
+    userResults.textContent=`${User.allUser[i].name} has ${User.allUser[i].shown} with ${User.allUser[i].votes}`;
+    //console.log('hello');
 
-      list.appendChild(userResults);
-
-      userResults.textContent=`${User.allUser[i].name} has ${User.allUser[i].shown} with ${User.allUser[i].votes}`;
-      console.log('hello');
-
-
-
-    }
-
-    button.removeEventListener('click',buttonClick);
 
 
   }
 
+  button.removeEventListener('click',buttonClick);
 
 
+}
 
+
+function chart() {
+  //console.log(votes);
+  //console.log(shown);
+  let ctx = document.getElementById('myChart');
+  let myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels:goatName,
+      datasets: [{
+        label: '# of Votes',
+        data:votes,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      },
+      {
+        label: '# of Shown',
+        data:shown,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
 
 }
 
@@ -221,9 +295,16 @@ function buttonClick() {
 
 
 
+// -----------------comments-------------------
+
+// let list=document.getElementById('result-list');
 
 
+// for (let i = 0; i < User.allUser.length; i++) {
+//   let userResults=document.createElement('li');
 
+//   list.appendChild(userResults);
 
-
-
+//   userResults.textContent=`${User.allUser[i].name} has ${User.allUser[i].shown} with ${User.allUser[i].votes}`;
+//   //console.log('hello');
+// }
