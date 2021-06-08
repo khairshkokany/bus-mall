@@ -17,6 +17,7 @@ images.append(leftImagesElement);
 images.append(rightImagesElement);
 images.append(middleImagesElement);
 
+let timesRow=[];
 
 let maxAttempts=25;
 
@@ -74,6 +75,41 @@ new User('water-can','img/water-can.jpg');
 new User('wine-glass','img/wine-glass.jpg');
 
 
+function updateStoreage() {
+
+  let arrayString=JSON.stringify(User.allUser);
+
+
+  localStorage.setItem('user',arrayString);
+
+
+}
+
+console.log(updateStoreage);
+
+function getUserData() {
+
+
+  let data=localStorage.getItem('user');
+
+  let userData=JSON.parse(data);
+
+
+  if (userData!==null) {
+
+    User.allUser=userData;
+  }
+
+
+  // renderImages();
+
+}
+
+getUserData();
+
+
+
+
 
 
 function generateRandomNumber() {
@@ -89,9 +125,7 @@ function generateRandomNumber() {
 
 
 
-let timesRow=[];
 function renderImages() {
-
 
   leftImageRandom=generateRandomNumber();
 
@@ -115,7 +149,7 @@ function renderImages() {
   timesRow.push(rightImageRandom);
   timesRow.push(middleImageRandom);
 
-
+  console.log(timesRow);
   User.allUser[leftImageRandom].shown++;
   User.allUser[rightImageRandom].shown++;
   User.allUser[middleImageRandom].shown++;
@@ -134,6 +168,8 @@ function renderImages() {
 
 
 renderImages();
+console.log(renderImages);
+
 
 images.addEventListener('click',userClick);
 
@@ -156,22 +192,28 @@ function userClick(event) {
       //console.log(leftImagesElement);
 
       User.allUser[leftImageRandom].votes++;
+      renderImages();
 
     }else if (event.target.id==='right') {
 
       User.allUser[rightImageRandom].votes++;
+      renderImages();
 
-    }else {
+    }else if (event.target.id==='middle'){
 
       User.allUser[middleImageRandom].votes++;
+      renderImages();
+
+    }else{
+
+      alert('please make sure to click to images ..!');
+
 
     }
 
     //console.log(User.allUser);
 
-    renderImages();
   }
-
 
   else{
 
@@ -185,6 +227,11 @@ function userClick(event) {
 
 
 
+      button.addEventListener('click',buttonClick);
+
+      updateStoreage();
+      // getUserData();
+
 
     }
 
@@ -196,10 +243,8 @@ function userClick(event) {
 
 }
 
-
 let button=document.getElementById('button');
 
-button.addEventListener('click',buttonClick);
 
 
 
@@ -222,13 +267,14 @@ function buttonClick() {
   }
 
   button.removeEventListener('click',buttonClick);
+  // updateStoreage();
 
 
 }
 
 
 function chart() {
-  //console.log(votes);
+  console.log(votes);
   //console.log(shown);
   let ctx = document.getElementById('myChart');
   let myChart = new Chart(ctx, {
@@ -289,7 +335,6 @@ function chart() {
   });
 
 }
-
 
 
 
